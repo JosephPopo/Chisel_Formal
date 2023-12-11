@@ -1,4 +1,4 @@
-package gcd
+package Counters
 
 import chisel3._
 import chiseltest._
