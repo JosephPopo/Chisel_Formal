@@ -7,13 +7,10 @@ import chisel3.util._
 
 class UpDownCounter(val max: UInt) extends Module {
     val io = IO(new Bundle {
-
         val upOrDown = Input(Bool())
         val reset    = Input(Bool())
         val out   = Output(UInt(max.getWidth.W))
     })
-    
-    //assume(io.upOrDown === 1.U)
     
     val count = RegInit(0.U(max.getWidth.W))
     
@@ -24,15 +21,18 @@ class UpDownCounter(val max: UInt) extends Module {
     } .otherwise {
         count := Mux(count === 0.U, max - 1.U, count - 1.U)
     }
-
     
+    printf("%b\n", io.out)
+    io.out := count
+
+    //assume(io.upOrDown === 1.U)
     assert(count < max)
     assert(io.out < max)
     //assert output/count never excedes max + 1
     assert(io.out =/= (max + 1.U))
     assert(count >= 0.U)
     assert(io.out >= 0.U)
-
+}
     /*
     //use an assertion to makesure the counter is not skipping any values
     // Formal Verification
@@ -47,11 +47,11 @@ class UpDownCounter(val max: UInt) extends Module {
         assert(count === Mux(past(count) === 0.U, max - 1.U, past(count) - 1.U))
     }
     */
-    io.out := count
-}
+    
+
 
 
 object UpDownCounter extends App {
   println("Generating the hardware")
-  emitVerilog(new UpDownCounter(16.U), Array("--target-dir", "generated"))
+  emitVerilog(new UpDownCounter(32.U), Array("--target-dir", "generated"))
 }
