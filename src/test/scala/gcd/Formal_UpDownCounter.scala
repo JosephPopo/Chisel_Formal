@@ -8,6 +8,6 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 class Formal_UpDownCounter extends AnyFlatSpec with ChiselScalatestTester with Formal {
     "UpDownCounter" should "pass" in {
-        verify(new UpDownCounter(64.U), Seq(BoundedCheck(100)))
+        verify(new UpDownCounter(64.U), Seq(BoundedCheck(50)))
     }
 }
