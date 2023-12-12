@@ -11,6 +11,33 @@
   `define RANDOM $random
 `endif // not def RANDOM
 
+// Users can define 'PRINTF_COND' to add an extra gate to prints.
+`ifndef PRINTF_COND_
+  `ifdef PRINTF_COND
+    `define PRINTF_COND_ (`PRINTF_COND)
+  `else  // PRINTF_COND
+    `define PRINTF_COND_ 1
+  `endif // PRINTF_COND
+`endif // not def PRINTF_COND_
+
+// Users can define 'ASSERT_VERBOSE_COND' to add an extra gate to assert error printing.
+`ifndef ASSERT_VERBOSE_COND_
+  `ifdef ASSERT_VERBOSE_COND
+    `define ASSERT_VERBOSE_COND_ (`ASSERT_VERBOSE_COND)
+  `else  // ASSERT_VERBOSE_COND
+    `define ASSERT_VERBOSE_COND_ 1
+  `endif // ASSERT_VERBOSE_COND
+`endif // not def ASSERT_VERBOSE_COND_
+
+// Users can define 'STOP_COND' to add an extra gate to stop conditions.
+`ifndef STOP_COND_
+  `ifdef STOP_COND
+    `define STOP_COND_ (`STOP_COND)
+  `else  // STOP_COND
+    `define STOP_COND_ 1
+  `endif // STOP_COND
+`endif // not def STOP_COND_
+
 // Users can define INIT_RANDOM as general code that gets injected into the
 // initializer block for modules with registers.
 `ifndef INIT_RANDOM
@@ -39,29 +66,54 @@
 module UpDownCounter(	// <stdin>:3:10
   input        clock,	// <stdin>:4:11
                reset,	// <stdin>:5:11
-               io_upOrDown,	// src/main/scala/gcd/UpdownCounter.scala:8:16
-               io_reset,	// src/main/scala/gcd/UpdownCounter.scala:8:16
-  output [4:0] io_out	// src/main/scala/gcd/UpdownCounter.scala:8:16
+               io_upOrDown,	// src/main/scala/Counters/UpDownCounter.scala:8:16
+               io_reset,	// src/main/scala/Counters/UpDownCounter.scala:8:16
+  output [4:0] io_out	// src/main/scala/Counters/UpDownCounter.scala:8:16
 );
 
-  reg [4:0] count;	// src/main/scala/gcd/UpdownCounter.scala:15:24
+  reg [4:0] count;	// src/main/scala/Counters/UpDownCounter.scala:15:24
   always @(posedge clock) begin	// <stdin>:4:11
+    if (~reset)	// src/main/scala/Counters/UpDownCounter.scala:14:11
+      assume__assume: assume(io_upOrDown);	// src/main/scala/Counters/UpDownCounter.scala:14:11
     if (reset)	// <stdin>:4:11
-      count <= 5'h0;	// src/main/scala/gcd/UpdownCounter.scala:15:24
-    else if (io_reset)	// src/main/scala/gcd/UpdownCounter.scala:8:16
-      count <= 5'h0;	// src/main/scala/gcd/UpdownCounter.scala:15:24
-    else if (io_upOrDown) begin	// src/main/scala/gcd/UpdownCounter.scala:8:16
-      if (count == 5'hF)	// src/main/scala/gcd/UpdownCounter.scala:15:24, :20:{28,36}
-        count <= 5'h0;	// src/main/scala/gcd/UpdownCounter.scala:15:24
-      else	// src/main/scala/gcd/UpdownCounter.scala:20:28
-        count <= count + 5'h1;	// src/main/scala/gcd/UpdownCounter.scala:15:24, :20:54
+      count <= 5'h0;	// src/main/scala/Counters/UpDownCounter.scala:15:24
+    else if (io_reset)	// src/main/scala/Counters/UpDownCounter.scala:8:16
+      count <= 5'h0;	// src/main/scala/Counters/UpDownCounter.scala:15:24
+    else if (io_upOrDown) begin	// src/main/scala/Counters/UpDownCounter.scala:8:16
+      if (count == 5'hF)	// src/main/scala/Counters/UpDownCounter.scala:15:24, :20:{28,36}
+        count <= 5'h0;	// src/main/scala/Counters/UpDownCounter.scala:15:24
+      else	// src/main/scala/Counters/UpDownCounter.scala:20:28
+        count <= count + 5'h1;	// src/main/scala/Counters/UpDownCounter.scala:15:24, :20:54
     end
-    else if (count == 5'h0)	// src/main/scala/gcd/UpdownCounter.scala:15:24, :22:28
-      count <= 5'hF;	// src/main/scala/gcd/UpdownCounter.scala:15:24, :20:36
-    else	// src/main/scala/gcd/UpdownCounter.scala:22:28
-      count <= count - 5'h1;	// src/main/scala/gcd/UpdownCounter.scala:15:24, :22:54
+    else if (count == 5'h0)	// src/main/scala/Counters/UpDownCounter.scala:15:24, :22:28
+      count <= 5'hF;	// src/main/scala/Counters/UpDownCounter.scala:15:24, :20:36
+    else	// src/main/scala/Counters/UpDownCounter.scala:22:28
+      count <= count - 5'h1;	// src/main/scala/Counters/UpDownCounter.scala:15:24, :22:54
   end // always @(posedge)
   `ifndef SYNTHESIS	// <stdin>:3:10
+    always @(posedge clock) begin	// src/main/scala/Counters/UpDownCounter.scala:14:11
+      if ((`PRINTF_COND_) & ~reset & ~io_upOrDown)	// src/main/scala/Counters/UpDownCounter.scala:14:11
+        $fwrite(32'h80000002,
+                "Assumption failed\n    at UpDownCounter.scala:14 assume(io.upOrDown === 1.U)\n");	// src/main/scala/Counters/UpDownCounter.scala:14:11
+      if (~reset & count[4]) begin	// src/main/scala/Counters/UpDownCounter.scala:15:24, :26:{11,18}
+        if (`ASSERT_VERBOSE_COND_)	// src/main/scala/Counters/UpDownCounter.scala:26:11
+          $error("Assertion failed\n    at UpDownCounter.scala:26 assert(count < max)\n");	// src/main/scala/Counters/UpDownCounter.scala:26:11
+        if (`STOP_COND_)	// src/main/scala/Counters/UpDownCounter.scala:26:11
+          $fatal;	// src/main/scala/Counters/UpDownCounter.scala:26:11
+      end
+      if (~reset & count[4]) begin	// src/main/scala/Counters/UpDownCounter.scala:15:24, :26:18, :27:11
+        if (`ASSERT_VERBOSE_COND_)	// src/main/scala/Counters/UpDownCounter.scala:27:11
+          $error("Assertion failed\n    at UpDownCounter.scala:27 assert(io.out < max)\n");	// src/main/scala/Counters/UpDownCounter.scala:27:11
+        if (`STOP_COND_)	// src/main/scala/Counters/UpDownCounter.scala:27:11
+          $fatal;	// src/main/scala/Counters/UpDownCounter.scala:27:11
+      end
+      if (~reset & count == 5'h11) begin	// src/main/scala/Counters/UpDownCounter.scala:15:24, :28:{11,19,28}
+        if (`ASSERT_VERBOSE_COND_)	// src/main/scala/Counters/UpDownCounter.scala:28:11
+          $error("Assertion failed\n    at UpDownCounter.scala:28 assert(io.out =/= (max + 1.U))\n");	// src/main/scala/Counters/UpDownCounter.scala:28:11
+        if (`STOP_COND_)	// src/main/scala/Counters/UpDownCounter.scala:28:11
+          $fatal;	// src/main/scala/Counters/UpDownCounter.scala:28:11
+      end
+    end // always @(posedge)
     `ifdef FIRRTL_BEFORE_INITIAL	// <stdin>:3:10
       `FIRRTL_BEFORE_INITIAL	// <stdin>:3:10
     `endif // FIRRTL_BEFORE_INITIAL
@@ -72,13 +124,13 @@ module UpDownCounter(	// <stdin>:3:10
       `endif // INIT_RANDOM_PROLOG_
       `ifdef RANDOMIZE_REG_INIT	// <stdin>:3:10
         _RANDOM_0 = `RANDOM;	// <stdin>:3:10
-        count = _RANDOM_0[4:0];	// src/main/scala/gcd/UpdownCounter.scala:15:24
+        count = _RANDOM_0[4:0];	// src/main/scala/Counters/UpDownCounter.scala:15:24
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// <stdin>:3:10
       `FIRRTL_AFTER_INITIAL	// <stdin>:3:10
     `endif // FIRRTL_AFTER_INITIAL
   `endif // not def SYNTHESIS
-  assign io_out = count;	// <stdin>:3:10, src/main/scala/gcd/UpdownCounter.scala:15:24
+  assign io_out = count;	// <stdin>:3:10, src/main/scala/Counters/UpDownCounter.scala:15:24
 endmodule
 
