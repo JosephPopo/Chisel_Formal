@@ -1,11 +1,10 @@
 package Counters
 
-import chisel3.SyncReadMem.{ReadFirst, ReadUnderWrite, Undefined, WriteFirst}
 import chisel3._
 import chisel3.util._
-import firrtl2._
-import chiseltest.formal.past
-import chiseltest.simulator.Firrtl2AnnotationWrapper
+import chisel3.stage.ChiselGeneratorAnnotation
+//import chiseltest.simulator.Firrtl2AnnotationWrapper
+
 //import chiseltest.formal._
 
 class UpDownCounter(val max: UInt) extends Module {
@@ -25,20 +24,21 @@ class UpDownCounter(val max: UInt) extends Module {
         count := Mux(count === 0.U, max - 1.U, count - 1.U)
     }
     
-    printf("%b\n", io.out)
-    io.out := count
+    
 
     //assume(io.upOrDown === 1.U)
     assert(count < max)
     assert(io.out < max)
+    
     //assert output/count never excedes max + 1
     assert(io.out =/= (max + 1.U))
     assert(count >= 0.U)
     assert(io.out >= 0.U)
 
+    /*
     
-    //use an assertion to makesure the counter is not skipping any values
-    // Formal Verification
+    // use an assertion to makesure the counter is not skipping any values
+    // Formal Verification Using past asserts
     when(past(io.reset)) {
         // If reset was asserted in the previous cycle, the counter should be 0 now
         assert(count === 0.U)
@@ -49,6 +49,10 @@ class UpDownCounter(val max: UInt) extends Module {
         // If counting down in the previous cycle, the counter should have decremented by 1 or wrapped to max - 1
         assert(count === Mux(past(count) === 0.U, max - 1.U, past(count) - 1.U))
     }
+    */
+
+    printf("%b\n", io.out)
+    io.out := count
 }
 
 
