@@ -26,3 +26,6 @@ jobs:
         run: sbt test
       - name: mill Test
         run: mill _.test
+      - name: Install CIRCT
+        uses: circt/install-circt@v1.1.1
+            
