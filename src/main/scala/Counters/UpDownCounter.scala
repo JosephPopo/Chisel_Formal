@@ -3,6 +3,9 @@ package Counters
 import chisel3.SyncReadMem.{ReadFirst, ReadUnderWrite, Undefined, WriteFirst}
 import chisel3._
 import chisel3.util._
+import firrtl2._
+import chiseltest.formal.past
+import chiseltest.simulator.Firrtl2AnnotationWrapper
 //import chiseltest.formal._
 
 class UpDownCounter(val max: UInt) extends Module {
@@ -32,8 +35,8 @@ class UpDownCounter(val max: UInt) extends Module {
     assert(io.out =/= (max + 1.U))
     assert(count >= 0.U)
     assert(io.out >= 0.U)
-}
-    /*
+
+    
     //use an assertion to makesure the counter is not skipping any values
     // Formal Verification
     when(past(io.reset)) {
@@ -46,8 +49,7 @@ class UpDownCounter(val max: UInt) extends Module {
         // If counting down in the previous cycle, the counter should have decremented by 1 or wrapped to max - 1
         assert(count === Mux(past(count) === 0.U, max - 1.U, past(count) - 1.U))
     }
-    */
-    
+}
 
 
 
