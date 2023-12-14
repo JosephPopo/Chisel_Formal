@@ -4,8 +4,7 @@ import chisel3._
 import chisel3.util._
 import chisel3.stage.ChiselGeneratorAnnotation
 //import chiseltest.simulator.Firrtl2AnnotationWrapper
-
-//import chiseltest.formal._
+import chiseltest.formal._
 
 class UpDownCounter(val max: UInt) extends Module {
     val io = IO(new Bundle {
@@ -34,9 +33,11 @@ class UpDownCounter(val max: UInt) extends Module {
     assert(io.out =/= (max + 1.U))
     assert(count >= 0.U)
     assert(io.out >= 0.U)
+//linear regression
 
-    /*
-    
+//mother testbench
+//vpi-c
+
     // use an assertion to makesure the counter is not skipping any values
     // Formal Verification Using past asserts
     when(past(io.reset)) {
@@ -49,7 +50,6 @@ class UpDownCounter(val max: UInt) extends Module {
         // If counting down in the previous cycle, the counter should have decremented by 1 or wrapped to max - 1
         assert(count === Mux(past(count) === 0.U, max - 1.U, past(count) - 1.U))
     }
-    */
 
     printf("%b\n", io.out)
     io.out := count
